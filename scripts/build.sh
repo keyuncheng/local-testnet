@@ -6,8 +6,9 @@ set -eu
 mkdir -p $BUILD_DIR
 
 # Generate a dummy password for accounts
-echo "itsjustnothing" > $ROOT/password
+echo "adslab" > $ROOT/password
 
+# Download staking-deposit-cli binary exec
 if ! test -e $BUILD_DIR/deposit; then
     echo "$BUILD_DIR/deposit not found. Downloading it from https://github.com/ethereum/staking-deposit-cli"
 
@@ -20,23 +21,27 @@ if ! test -e $BUILD_DIR/deposit; then
     echo "$BUILD_DIR/deposit downloaded"
 fi
 
+# check how many validators keys have been generated
 validator_count=0
 if test -e $BUILD_DIR/validator_keys; then
     # Check how many validators we have already generated
     validator_count=$(find $BUILD_DIR/validator_keys -name "keystore*" -print | wc -l)
 fi
 
-if test $validator_count -lt $VALIDATOR_COUNT; then
-    echo "Generating the credentials for all of $VALIDATOR_COUNT validators at $BUILD_DIR/validator_keys"
+# Generate only for the remaining validators
+# We use kiln because we have the same GENESIS_FORK_VERSION which is
+# 0x70000069
+echo "Generate the credentials for all of $VALIDATOR_COUNT validators"
 
-    # Generate only for the remaining validators
-    # We use kiln because we have the same GENESIS_FORK_VERSION which is 0x70000069
+if test $validator_count -lt $VALIDATOR_COUNT; then
+    echo "Generating the credentials for the remaining $(expr $VALIDATOR_COUNT - $validator_count) validators at $BUILD_DIR/validator_keys"
+
     $BUILD_DIR/deposit \
         --language english \
         --non_interactive \
         existing-mnemonic \
         --num_validators $(expr $VALIDATOR_COUNT - $validator_count)\
-        --mnemonic="abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about" \
+        --mnemonic="adslab" \
         --validator_start_index $validator_count \
         --chain kiln \
         --keystore_password $(cat $ROOT/password) \

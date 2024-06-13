@@ -19,6 +19,7 @@ if test -e $ROOT; then
     exit 1
 fi
 
+# check installation
 check_cmd geth "See https://geth.ethereum.org/docs/getting-started/installing-geth for more detail."
 check_cmd bootnode "See https://geth.ethereum.org/docs/getting-started/installing-geth for more detail."
 check_cmd lighthouse "See https://lighthouse-book.sigmaprime.io/installation.html for more detail."
@@ -40,16 +41,18 @@ cleanup() {
     echo "Deleted the data directory"
 }
 
+# cleanup data directory on exit
 trap cleanup EXIT
 
 mkdir -p $ROOT
 
-# Run everything needed to generate $BUILD_DIR
+# generate build directory (generate keystore files using ethereum/staking-deposit-cli)
 if ! ./scripts/build.sh; then
     echo -e "\n*Failed!* in the build step\n"
     exit 1
 fi
 
+# prepare execulation layer nodes (execution clients)
 if ! ./scripts/prepare-el.sh; then
     echo -e "\n*Failed!* in the execution layer preparation step\n"
     exit 1
@@ -73,6 +76,7 @@ for (( node=1; node<=$NODE_COUNT; node++ )); do
     ./scripts/el-node.sh $node $boot_enode &
 done
 
+# TODO: resume from here
 ./scripts/signer-node.sh $SIGNER_EL_DATADIR $boot_enode &
 
 # Wait until the signer node starts the IPC socket
