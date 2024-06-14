@@ -10,11 +10,10 @@ cleanup() {
 trap cleanup EXIT
 
 # Start the boot node
-bootnode_port=30305
-echo "Started the geth bootnode which is now listening at :$bootnode_port"
+echo "Started the geth bootnode which is now listening at :$EL_BOOTNODE_PORT"
 bootnode \
     -nodekey $EL_BOOT_KEY_FILE \
-    -addr :$bootnode_port \
+    -addr localhost:$EL_BOOTNODE_PORT \
     < /dev/null > $EL_BOOT_LOG_FILE 2>&1
 
 if test $? -ne 0; then

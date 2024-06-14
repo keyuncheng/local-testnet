@@ -18,15 +18,16 @@ log_file=$datadir/geth.log
 echo "Started the geth node 'signer' which is now listening at port $SIGNER_PORT. You can see the log at $log_file"
 $GETH_CMD \
     --datadir $datadir \
+    --authrpc.addr "localhost" \
     --authrpc.port $SIGNER_RPC_PORT \
     --port $SIGNER_PORT \
-    --http \
-    --http.port $SIGNER_HTTP_PORT \
-    --allow-insecure-unlock \
     --bootnodes $boot_enode \
     --networkid $NETWORK_ID \
     --unlock $address \
     --password $ROOT/password \
+    --allow-insecure-unlock \
+    --http \
+    --http.port $SIGNER_HTTP_PORT \
     --mine \
     < /dev/null > $log_file 2>&1
 

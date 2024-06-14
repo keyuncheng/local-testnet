@@ -1,0 +1,3 @@
+EL-node ip
+EL-bootnode ip
+EL-signer node ip
