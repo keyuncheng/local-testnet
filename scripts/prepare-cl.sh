@@ -5,6 +5,7 @@ set -eu
 
 mkdir -p $CONSENSUS_DIR
 
+# install modules
 if ! test -e ./web3/node_modules; then
     echo "The package ./web3 doesn't have node modules installed yet. Installing the node modules now"
     npm --prefix ./web3 install >/dev/null 2>/dev/null
@@ -55,16 +56,17 @@ echo "SECONDS_PER_ETH1_BLOCK: \"$SECONDS_PER_ETH1_BLOCK\"" >> $CONFIG_FILE
 
 echo "Generated $CONFIG_FILE"
 
+# create genesis block
 lcli eth1-genesis \
     --spec $PRESET_BASE \
-    --eth1-endpoints http://localhost:$SIGNER_HTTP_PORT \
+    --eth1-endpoints http://$SIGNER_IP_ADDR:$SIGNER_HTTP_PORT \
     --testnet-dir $CONSENSUS_DIR 2>/dev/null
 
 echo "Generated $CONSENSUS_DIR/genesis.ssz"
 
 lcli \
 	generate-bootnode-enr \
-	--ip 127.0.0.1 \
+	--ip $CL_BOOTNODE_IP_ADDR \
 	--udp-port $CL_BOOTNODE_PORT \
 	--tcp-port $CL_BOOTNODE_PORT \
 	--genesis-fork-version $GENESIS_FORK_VERSION \
