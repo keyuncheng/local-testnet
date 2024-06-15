@@ -42,7 +42,7 @@ for (( node=1; node<=$NODE_COUNT; node++ )); do
     new_account_dist "#$node" $el_data_dir $node_ip
 done
 
-# create signer account
+# Node 0: create signer account
 new_account_dist "'signer'" $SIGNER_EL_DATADIR ${node_list[0]}
 
 # Add the extradata (pad with $1 of zeros)
@@ -59,16 +59,16 @@ genesis=$(echo $genesis | jq ". + { \"extradata\": \"$extra_data\" }")
 
 config=$(echo $genesis | jq ".config + { \"chainId\": "$NETWORK_ID", \"terminalTotalDifficulty\": "$TERMINAL_TOTAL_DIFFICULTY", \"clique\": { \"period\": "$SECONDS_PER_ETH1_BLOCK", \"epoch\": 30000 } }")
 genesis=$(echo $genesis | jq ". + { \"config\": $config }")
-echo $genesis > $GENESIS_FILE
 
 # All nodes: Generate the genesis state (genesis block)
+echo $genesis > $GENESIS_FILE
 for (( node=1; node<=$NODE_COUNT; node++ )); do
     node_ip=${node_list[$node]}
     scp $GENESIS_FILE $node_ip:$EXECUTION_DIR
 done
 echo "Generated genesis block file $GENESIS_FILE"
 
-# Initialize the geth nodes' directories
+# Node #1-#NODE_COUNT Initialize the geth nodes' directories
 for (( node=1; node<=$NODE_COUNT; node++ )); do
     node_ip=${node_list[$node]}
     el_data_dir $node

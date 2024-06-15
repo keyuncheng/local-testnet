@@ -28,6 +28,7 @@ $GETH_CMD \
     --allow-insecure-unlock \
     --http \
     --http.port $SIGNER_HTTP_PORT \
+    --miner.etherbase $address
     --mine \
     < /dev/null > $log_file 2>&1
 
