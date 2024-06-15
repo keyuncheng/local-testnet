@@ -5,8 +5,11 @@ set -eu
 
 mkdir -p $BUILD_DIR
 
-# Generate a dummy password for accounts
-echo $default_passwd > $ROOT/password
+# All Nodes: Generate a dummy password for accounts
+for (( node=0; node<=$NODE_COUNT; node++ )); do
+    node_ip=${node_list[$node]}
+    ssh $node_ip "echo $default_passwd > $ROOT/password"
+done
 
 # Download staking-deposit-cli binary exec
 if ! test -e $BUILD_DIR/deposit; then

@@ -11,3 +11,5 @@ cl_data_dir() {
 node_error() {
     echo -e "\n*Node Error!*: $1\n"
 }
+
+readarray -t node_list < $PROJ_DIR/node_list.txt
