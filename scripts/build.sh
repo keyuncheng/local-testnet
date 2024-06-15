@@ -6,7 +6,7 @@ set -eu
 mkdir -p $BUILD_DIR
 
 # Generate a dummy password for accounts
-echo "adslab" > $ROOT/password
+echo $default_passwd > $ROOT/password
 
 # Download staking-deposit-cli binary exec
 if ! test -e $BUILD_DIR/deposit; then
@@ -41,8 +41,8 @@ if test $validator_count -lt $VALIDATOR_COUNT; then
         --non_interactive \
         existing-mnemonic \
         --num_validators $(expr $VALIDATOR_COUNT - $validator_count)\
-        --mnemonic="adslab" \
-        --validator_start_index $validator_count \
+        --mnemonic="abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about" \
+	--validator_start_index $validator_count \
         --chain kiln \
         --keystore_password $(cat $ROOT/password) \
         --folder $BUILD_DIR
