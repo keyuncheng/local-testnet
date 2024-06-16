@@ -90,8 +90,10 @@ while ! test -S $SIGNER_EL_DATADIR/geth.ipc; do
     sleep 1
 done
 
+echo -e "Node #0: the signer node starts the IPC socket"
+
 # # prepare for consensus layer node
-# if ! ./scripts/prepare-cl.sh; then
+# if ! ./scripts/prepare-cl-dist.sh; then
 #     echo -e "\n*Failed!* in the consensus layer preparation step\n"
 #     exit 1
 # fi

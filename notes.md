@@ -18,6 +18,12 @@ export PATH=$PATH:<prefix>/go-ethereum-1.13.0/build/bin
 download go-ethereum-v1.13.0.tar.gz
 make all
 
+# FAQ
+
+* Errors in geth.log: "retrieved hash chain is invalid"
+   * sync time using ntpdate (ntp.ubuntu.com)
+   * https://ethereum.stackexchange.com/questions/15379/retrieved-hash-chain-is-invalid
+
 EL-node ip
 EL-bootnode ip
 EL-signer node ip
