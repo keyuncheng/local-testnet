@@ -13,9 +13,9 @@ trap cleanup EXIT
 # Start the boot node
 node_ip=${node_list[0]}
 echo "Node #0: Started the geth bootnode which is now listening at $node_ip:$EL_BOOTNODE_PORT"
-bootnode \
+NO_PROXY=$EL_BOOTNODE_IP_ADDR bootnode \
     -nodekey $EL_BOOT_KEY_FILE \
-    -addr $node_ip:$EL_BOOTNODE_PORT \
+    -addr $EL_BOOTNODE_IP_ADDR:$EL_BOOTNODE_PORT \
     < /dev/null > $EL_BOOT_LOG_FILE 2>&1
 
 if test $? -ne 0; then

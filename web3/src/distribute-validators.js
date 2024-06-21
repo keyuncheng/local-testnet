@@ -38,6 +38,7 @@ const argv = yargs
 (async function() {
     const files = fs.readdirSync(argv.dir);
 
+    // read deposit_data-*.json
     const deposits = files
         .filter(file => file.startsWith('deposit_data-'))
         .map(file => {
@@ -45,7 +46,7 @@ const argv = yargs
             return data;
         })
         .reduce((acc, cur) => acc.concat(cur), [])
-        .sort((a, b) => {
+        .sort((a, b) => { // sort by pubkey
             if (a.pubkey < b.pubkey) {
                 return -1;
             } else if (a.pubkey > b.pubkey) {
@@ -54,7 +55,8 @@ const argv = yargs
             throw 'The deposit data file contains duplicated public keys';
         })
         .splice(-argv.validatorCount);
-
+    
+    // read keystores
     const keystores = new Map();
     files
         .filter(file => file.startsWith('keystore-'))
@@ -64,6 +66,7 @@ const argv = yargs
             keystores.set(data.pubkey, content);
         });
 
+    // evenly distribute validators across nodes
     const validatorPerNode = Math.ceil(argv.validatorCount / argv.nodeCount);
     for (let index = 0; index < argv.nodeCount; index++) {
         const start = index * validatorPerNode;

@@ -50,7 +50,7 @@ do
     ssh $node_ip "mkdir -p $ROOT"
 done
 
-# node #0: generate build directory (generate keystore files using ethereum/staking-deposit-cli)
+# Node #0: generate build directory (generate keystore files using ethereum/staking-deposit-cli)
 if ! ./scripts/build.sh; then
     echo -e "\n*Failed!* in the build step\n"
     exit 1
@@ -62,7 +62,7 @@ if ! ./scripts/prepare-el-dist.sh; then
     exit 1
 fi
 
-# node #0: run execution layer bootnode
+# Node #0: run execution layer bootnode
 ./scripts/el-bootnode-dist.sh &
 bootnode_pid=$!
 # Check if the bootnode is ready (until we can parse the boot enode from the bootnode logs)
@@ -77,13 +77,13 @@ while true; do
     sleep 1
 done
 
-# run execution layer node
+# Node 1-NODE_COUNT-1: run execution layer node
 for (( node=1; node<=$NODE_COUNT; node++ )); do
     ./scripts/el-node-dist.sh $node $boot_enode &
 done
 
-# run signer node
-./scripts/signer-node.sh $SIGNER_EL_DATADIR $boot_enode &
+# Node 0: run signer node
+./scripts/signer-node-dist.sh $SIGNER_EL_DATADIR $boot_enode &
 
 # Wait until the signer node starts the IPC socket
 while ! test -S $SIGNER_EL_DATADIR/geth.ipc; do
@@ -92,16 +92,18 @@ done
 
 echo -e "Node #0: the signer node starts the IPC socket"
 
-# # prepare for consensus layer node
-# if ! ./scripts/prepare-cl-dist.sh; then
-#     echo -e "\n*Failed!* in the consensus layer preparation step\n"
-#     exit 1
-# fi
-# ./scripts/cl-bootnode.sh &
-# 
-# for (( node=1; node<=$NODE_COUNT; node++ )); do
-#     ./scripts/cl-bn-node.sh $node &
-#     ./scripts/cl-vc-node.sh $node &
-# done
-# 
-# wait -n
+# All nodes: prepare for consensus layer node
+if ! ./scripts/prepare-cl-dist.sh; then
+    echo -e "\n*Failed!* in the consensus layer preparation step\n"
+    exit 1
+fi
+
+# Node 0: create consensus layer bootnode
+./scripts/cl-bootnode-dist.sh &
+
+for (( node=1; node<=$NODE_COUNT; node++ )); do
+    ./scripts/cl-bn-node-dist.sh $node &
+    ./scripts/cl-vc-node-dist.sh $node &
+done
+
+wait -n

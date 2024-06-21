@@ -27,7 +27,7 @@ const argv = yargs
     const contract = await undeployed
         .deploy({ data: json.bytecode })
         .send({
-            from: accounts[0], // from the first account
+            from: accounts[0], // from the first account (signer account)
             nonce: 0,
             gas: 3141592,
             gasPrice: '147000000000',
