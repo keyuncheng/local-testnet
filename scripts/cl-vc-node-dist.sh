@@ -19,12 +19,13 @@ log_file=$datadir/validator_client.log
 echo "Node $node_index: Started the lighthouse validator client #$node_index. You can see the log at $log_file"
 
 # Send all the fee to the PoA signer
-ssh $node_ip "NO_PROXY=$node_ip $LIGHTHOUSE_CMD validator_client \
+ssh $node_ip "NO_PROXY=\"*\" $LIGHTHOUSE_CMD validator_client \
     --datadir $datadir \
     --testnet-dir $CONSENSUS_DIR \
     --init-slashing-protection \
     --beacon-nodes http://$node_ip:$(expr $BASE_CL_HTTP_PORT + $node_index) \
     --suggested-fee-recipient $(ssh $SIGNER_IP_ADDR "cat $SIGNER_EL_DATADIR/address") \
+    --debug-level debug \
     < /dev/null > $log_file 2>&1"
 
 if test $? -ne 0; then

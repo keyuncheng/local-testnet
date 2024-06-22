@@ -103,7 +103,13 @@ fi
 
 for (( node=1; node<=$NODE_COUNT; node++ )); do
     ./scripts/cl-bn-node-dist.sh $node &
+done
+
+echo -e "Running beacon nodes"
+
+for (( node=1; node<=$NODE_COUNT; node++ )); do
     ./scripts/cl-vc-node-dist.sh $node &
 done
+
 
 wait -n

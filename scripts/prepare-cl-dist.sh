@@ -60,7 +60,7 @@ echo "SECONDS_PER_ETH1_BLOCK: \"$SECONDS_PER_ETH1_BLOCK\"" >> $CONFIG_FILE
 
 echo "Generated $CONFIG_FILE"
 
-# Node 0: create genesis block
+# Node 0: Listens to the eth1 chain and finds the genesis beacon state
 NO_PROXY=$CL_BOOTNODE_IP_ADDR lcli eth1-genesis \
     --spec $PRESET_BASE \
     --eth1-endpoints http://$SIGNER_IP_ADDR:$SIGNER_HTTP_PORT \
@@ -95,16 +95,13 @@ for (( node=1; node<=$NODE_COUNT; node++ )); do
     scp $CONSENSUS_DIR/deploy_block.txt $node_ip:$CONSENSUS_DIR
     scp $CONFIG_FILE $node_ip:$CONSENSUS_DIR
 
-    ssh $node_ip "NO_PROXY=$node_ip $LIGHTHOUSE_CMD \
+    ssh $node_ip "$LIGHTHOUSE_CMD \
         --testnet-dir $CONSENSUS_DIR \
         account validator import \
         --directory $CONSENSUS_DIR/validator_keys/node$node \
         --datadir $cl_data_dir \
         --password-file $ROOT/password \
-        --reuse-password"
-        
-    
-# --reuse-password 2>/dev/null"
+        --reuse-password 2>/dev/null"
     echo -n "."
 done
 echo -e "\nDone importing the keystores"

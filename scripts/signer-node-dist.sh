@@ -16,7 +16,7 @@ address=$(cat $datadir/address)
 log_file=$datadir/geth.log
 
 echo "Started the geth node 'signer' which is now listening at port $SIGNER_PORT. You can see the log at $log_file"
-NO_PROXY=$SIGNER_IP_ADDR $GETH_CMD \
+NO_PROXY="*" $GETH_CMD \
     --datadir $datadir \
     --nat extip:$SIGNER_IP_ADDR \
     --port $SIGNER_PORT \

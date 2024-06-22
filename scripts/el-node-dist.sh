@@ -22,7 +22,7 @@ http_port=$(expr $BASE_EL_HTTP_PORT + $node_index)
 log_file=$datadir/geth.log
 
 echo "Node $node_index: Started the geth node #$node_index which is now listening at ip $node_ip  port $port and rpc at port $rpc_port. You can see the log at $log_file"
-ssh $node_ip "NO_PROXY=$node_ip $GETH_CMD \
+ssh $node_ip "NO_PROXY=\"*\" $GETH_CMD \
     --datadir $datadir \
     --nat extip:$node_ip \
     --port $port \

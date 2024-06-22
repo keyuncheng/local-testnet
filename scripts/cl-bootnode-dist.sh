@@ -9,18 +9,20 @@ cleanup() {
 
 trap cleanup EXIT
 
-# Start the boot node
-echo "Started the lighthouse bootnode which is now listening at port $CL_BOOTNODE_PORT"
+# Node 0: Start the boot node
+echo "Node 0: Started the lighthouse bootnode which is now listening at port $CL_BOOTNODE_PORT"
 
 # --disable-packet-filter is necessary because it's involed in rate limiting and nodes per IP limit
 # See https://github.com/sigp/discv5/blob/v0.1.0/src/socket/filter/mod.rs#L149-L186
-NO_PROXY=$CL_BOOTNODE_IP_ADDR $LIGHTHOUSE_CMD boot_node \
+NO_PROXY="*" $LIGHTHOUSE_CMD boot_node \
     --testnet-dir $CONSENSUS_DIR \
     --port $CL_BOOTNODE_PORT \
     --listen-address $CL_BOOTNODE_IP_ADDR \
     --disable-packet-filter \
     --network-dir $CL_BOOTNODE_DIR \
+    --debug-level debug \
     < /dev/null > $CL_BOOT_LOG_FILE 2>&1
+
 
 if test $? -ne 0; then
     node_error "The CL bootnode returns an error. The last 10 lines of the log file is shown below.\n\n$(tail -n 10 $CL_BOOT_LOG_FILE)"
