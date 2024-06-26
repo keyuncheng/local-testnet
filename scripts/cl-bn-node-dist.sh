@@ -14,7 +14,7 @@ trap cleanup EXIT
 
 cl_data_dir $node_index
 datadir=$cl_data_dir
-port=$(expr $BASE_CL_PORT + $node_index)
+port=$(expr $BASE_CL_PORT + $node_index + $node_index)
 http_port=$(expr $BASE_CL_HTTP_PORT + $node_index)
 log_file=$datadir/beacon_node.log
 
@@ -36,15 +36,16 @@ ssh $node_ip "NO_PROXY=\"*\" $LIGHTHOUSE_CMD beacon_node \
     --staking \
     --enr-address $node_ip \
     --enr-udp-port $port \
-    --enr-tcp-port $port \
+    --enr-tcp-port $(expr $port + 1) \
     --listen-address $node_ip \
     --port $port \
     --http \
     --http-address $node_ip \
     --http-port $http_port \
     --disable-packet-filter \
-    --debug-level debug \
     < /dev/null > $log_file 2>&1"
+
+    # --debug-level debug \
 
 if test $? -ne 0; then
     node_error "Node $node_index: The lighthouse beacon node #$node_index returns an error. The last 10 lines of the log file is shown below.\n\n$(tail -n 10 $log_file)"

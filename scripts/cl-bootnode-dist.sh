@@ -20,9 +20,9 @@ NO_PROXY="*" $LIGHTHOUSE_CMD boot_node \
     --listen-address $CL_BOOTNODE_IP_ADDR \
     --disable-packet-filter \
     --network-dir $CL_BOOTNODE_DIR \
-    --debug-level debug \
     < /dev/null > $CL_BOOT_LOG_FILE 2>&1
 
+    # --debug-level debug \
 
 if test $? -ne 0; then
     node_error "The CL bootnode returns an error. The last 10 lines of the log file is shown below.\n\n$(tail -n 10 $CL_BOOT_LOG_FILE)"
